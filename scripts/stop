@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PID_FILE=server.pid
+LOG_FILE=app.log
+
+if [ -f $PID_FILE ];
+then
+	echo " ============================= Stopping Server ==========================" >> $LOG_FILE
+	kill `cat $PID_FILE`
+	rm $PID_FILE
+else
+	echo "Unable to stop server, there is no $PID_FILE in the current directory."
+fi

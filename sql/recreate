@@ -1,0 +1,5 @@
+#!/bin/bash
+
+psql -U postgres < initial/recreate.sql
+psql -U dispatch < initial/creates.sql
+psql -U dispatch < initial/inserts.sql

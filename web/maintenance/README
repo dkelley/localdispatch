@@ -1,0 +1,6 @@
+These files are served by nginx if it fails to proxy-pass to Jetty.
+
+For example, if you shut Jetty down, nginx will detect this and return a 502/504
+with either api.json (for API requests) or page.html (for other requests) as the response body.
+
+Without this, nginx would show a generic 502/504 error page.
