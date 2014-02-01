@@ -1,6 +1,7 @@
 package com.xmog.web.controller.api;
 
 import static com.xmog.stack.web.ContentTypes.CONTENT_TYPE_JSON;
+import static java.lang.String.format;
 import static java.util.Collections.singleton;
 
 import java.util.HashMap;
@@ -11,14 +12,17 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.xmog.command.AccountSignInCommand;
 import com.xmog.model.Account;
 import com.xmog.service.AccountService;
-import com.xmog.web.context.CurrentContext;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.xmog.stack.web.annotation.Public;
 import com.xmog.stack.exception.NotFoundException;
+import com.xmog.stack.web.annotation.Public;
+import com.xmog.web.context.CurrentContext;
 
 /**
  * @author Transmogrify LLC.
@@ -32,6 +36,8 @@ public class AccountApiController {
 
   @Inject
   private AccountService accountService;
+  
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   @POST
   @Public
@@ -44,6 +50,7 @@ public class AccountApiController {
     if (account == null)
       throw new NotFoundException("Sorry, we were unable to sign in with the credentials you provided.");
 
+    logger.debug(format("%s %s",account.getEmailAddress(), account.getRoleId()));
     currentContext.signIn(account, singleton(account.getRoleId()), command.getRememberMe());
 
     return new HashMap<String, Object>() {

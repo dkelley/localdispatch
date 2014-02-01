@@ -13,15 +13,17 @@ import javax.ws.rs.Produces;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Singleton;
 import com.xmog.stack.web.Page;
+import com.xmog.stack.web.annotation.Public;
 
 /**
  * @author Transmogrify LLC.
  */
 @Singleton
-@Path("/dashboard")
+@Path("/app")
 @Produces(CONTENT_TYPE_HTML)
-public class DashboardPageController {
+public class ApplicationPageController {
   @GET  
+  @Public
   public Page indexPage() {
     return dashboardPage("index");
   }
@@ -33,8 +35,8 @@ public class DashboardPageController {
   protected Page dashboardPage(final String name, Map<String, Object> model) {
     return new Page("templates/standard.html", new HashMap<String, Object>(model) {
       {
-        put("body", format("pages/dashboard/%s/body.html", name));
-        put("javascript", format("pages/dashboard/%s/javascript.html", name));
+        put("body", format("pages/application/%s/body.html", name));
+        put("javascript", format("pages/application/%s/javascript.html", name));
       }
     });
   }

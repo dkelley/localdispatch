@@ -1,0 +1,18 @@
+<h1>Sign In</h1>
+
+<form name="signInForm" class="well" ng-submit="signIn()">
+	<label>Email address</label>
+	<input emailAddress type="text" ng-model="emailAddress" required/>
+	<label>Password</label>
+	<input password type="password" ng-model="password" required/>
+	<label><input rememberMe type="checkbox" checked="checked"/> Remember Me</label>
+	
+	<!-- SUBMIT BUTTON -->
+	<button type="submit" class="btn btn-success btn-lg btn-block">
+		<span class="glyphicon glyphicon-flash"></span> Submit!
+	</button>
+	<div ng-show="error.length > 0" style="color: red;">{{error}}</div>
+		
+</form>
+
+<span class="label label-info">Try These!</span> test@xmog.com/test or admin@xmog.com/test

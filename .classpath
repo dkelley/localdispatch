@@ -54,6 +54,7 @@
 	<classpathentry kind="lib" path="libraries/reflections-0.9.9-RC1.jar"/>
 	<classpathentry kind="lib" path="libraries/servlet-api-3.0.jar"/>
 	<classpathentry kind="lib" path="libraries/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="libraries/stack-1.0-20140119.jar"/>
 	<classpathentry kind="lib" path="libraries/testng-6.8.jar"/>
 	<classpathentry kind="lib" path="libraries/twilio-java-sdk-3.4.0.jar"/>
 	<classpathentry kind="lib" path="libraries/velocity-1.7.jar"/>
@@ -63,6 +64,5 @@
 	<classpathentry kind="lib" path="libraries/websocket-server-9.0.6.v20130930.jar"/>
 	<classpathentry kind="lib" path="libraries/websocket-servlet-9.0.6.v20130930.jar"/>
 	<classpathentry kind="lib" path="libraries/yuicompressor-2.4.7.jar"/>
-	<classpathentry kind="lib" path="libraries/stack-1.0-20140119.jar"/>
 	<classpathentry kind="output" path=".build/eclipse"/>
 </classpath>

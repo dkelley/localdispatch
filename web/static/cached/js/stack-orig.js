@@ -9,6 +9,176 @@ stack.getCachedUrl = function(url){
 stack.debuggingEnabled = true;
 stack.characterEncoding = "UTF-8";
 
+/**
+ * Global collection of API calls that are currently executing -
+ * used by stack.api(params) to prevent double-click issues.
+ */
+stack.apiCallsInProgress = {};
+
+stack.api = function(params) {
+    params = params || {};
+    
+    if(!params.url)
+    	throw "You must supply an API URL.";    
+    
+    if(!params.method)
+    	throw "You must supply a method, e.g. POST.";
+
+    var url = params.url;
+    var jsonIndentation = stack.debuggingEnabled ? 2 : 0;    
+    var method = $.trim(params.method).toUpperCase();
+
+    var headers = {
+    		// Lets the server know what page we're on
+    		"X-Page-Url": location.href,
+    		// By default, API requests are stateful (use the session) unless we explicitly override
+    		"X-API-Stateful": params.stateful !== undefined ? params.stateful : "true"
+    		};
+        
+    if (params.apiToken !== undefined)
+        headers["X-API-Token"] = params.apiToken; 
+
+    var data;
+    
+    // If we're already processing a call to this endpoint, don't process another one until the current call ends.
+    if (stack.apiCallsInProgress[url] === true) {
+    	stack.log("Ignoring duplicate request - we're still busy processing an existing call to " + url);
+        return;
+    }
+
+    stack.apiCallsInProgress[url] = true;
+
+    // We handle GET requests differently from non-GETs (e.g. POSTs).
+    //
+    // Since GET requests cannot include data in the request body, we pass everything over as
+    // URL parameters and add an extra "json" parameter that is a JSON object containing all
+    // the parameters and their values.
+    //
+    // For non-GETs, we take the parameters and turn them into a JSON object and pass that along
+    // in the request body.
+    if (params.data === undefined) {
+        stack.log("Performing API " + method + " for " + url + " with no parameters.");
+        data = method == "GET" ? {} : "{}";
+    } else {
+        if (method == "GET") {
+            data = {};
+
+            // Copy out all provided data into an object that we'll send to the server
+            $.each(params.data, function(key, value) {
+                data[key] = value;
+            });
+
+            // Turn all params into a big JSON string parameter named "json"
+            data.json = stack.toJson(data, jsonIndentation);
+
+            stack.log("Performing API GET for " + url + " with parameters: " + data.json);
+        } else {
+            data = stack.toJson(params.data, jsonIndentation);
+            stack.log("Performing API POST for " + url + " with parameters: " + data);
+        }
+    }
+
+    return $.ajax({
+        type: method,
+        url: url,
+        data: data,
+        headers: headers,
+        contentType: (method == "GET" ? "application/x-www-form-urlencoded" : "application/json") + "; charset=" + stack.characterEncoding,
+        dataType: "json",
+        success: function(response, textStatus, jqXHR) {
+            if (stack.debuggingEnabled)
+                stack.log("API " + method + " for " + url + " succeeded (status " + jqXHR.status + "). Server said:", stack.toJson(response, jsonIndentation));
+
+            try {
+                if (params.onSuccess !== undefined)
+                    params.onSuccess(response, jqXHR.status);
+            } finally {
+                delete stack.apiCallsInProgress[url];
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            stack.log("API " + method + " for " + url + " failed. Server status code was " + jqXHR.status + " (" + (stack.isBlank(errorThrown) ? "no response from server" : errorThrown) + ").");
+
+            var aborted = textStatus === "abort";
+
+            try {
+                if (jqXHR.status === 0) {
+                	// Wrap this in a setTimeout to handle the case where an API call is cancelled by the user navigating away.
+                	// We don't have any way of differentiating between that and a call that failed because the server is down,
+                	// so the hack is to wait long enough that the page unloads before displaying the error.
+                	// Without the setTimeout, if you leave a page while an API call is in progress, you'll see this error in an alert box.
+          	        setTimeout(function() {          	        	
+                        if (!aborted) {                        	
+                            handleErrorResponse({
+                                description: "Oops! The internet connection seems to be down at the moment or the server is unavailable. Please try again in a few seconds."
+                            }, jqXHR.status);
+                        }          	        	
+          	        }, 5000);
+                } else {
+                    var response = {};
+
+                    try {
+                        response = stack.toJavascript(jqXHR.responseText);
+
+                        // Redundant "is dev" check here to avoid overhead of JSON marshaling in non-dev environments
+                        if (stack.debuggingEnabled) {
+                            var responseWithElidedStackTrace = {};
+                            $.each(response, function(key, value) {
+                                responseWithElidedStackTrace[key] = key === "stackTrace" ? "(elided)" : value;
+                            });
+
+                            stack.log("Response body is", stack.toJson(responseWithElidedStackTrace, jsonIndentation));
+                        }
+
+                        // Special behavior...if we get a 401 or 403 from an API call, redirect to wherever the API response tells us to (e.g. the sign-in page).
+                        // TODO: revisit this
+                        if (response.destination && (jqXHR.status === 401 || jqXHR.status === 403)) {
+                            location.href = response.destination;
+                            return;
+                        }
+                    } catch(e) {}
+
+                    handleErrorResponse(response, jqXHR.status);
+                }
+            } finally {
+                delete stack.apiCallsInProgress[url];
+            }
+        }
+    });
+
+    function handleErrorResponse(response, status) {
+        var defaultErrorMessage = "Sorry, an unexpected error has occurred. The technical team has been notified of the problem.";        
+        var description = (response === undefined || stack.isBlank(response.description)) ? defaultErrorMessage : response.description;
+        var errorCode = (response === undefined || response.errorCode === undefined) ? 1000 /* TODO: plug in the real default */ : response.errorCode;
+        status = status || 0;
+        
+        // If there's no response provided, make a fake one so client code doesn't choke.
+        if (response === undefined) {
+            if (params.onFailure === undefined) {
+                alert(description);
+            } else {
+                params.onFailure({
+                    description: description,
+                    errorCode: errorCode 
+                }, status);
+            }
+        } else {
+        	// There is a response - pass it along to the client.
+            if (stack.debuggingEnabled && response !== undefined && response.stackTrace !== undefined)
+                stack.log("Stack trace:\n", response.stackTrace);            
+            
+            if (params.onFailure === undefined) {
+                alert(description);
+            } else {
+            	// Make sure it has correct defaults in case the server didn't return one of these fields
+            	response.description = description;
+            	response.errorCode = errorCode;
+                params.onFailure(response, status);
+            }
+        }
+    }
+};
+
 stack.log = function() {
     if(!window.console || !window.console.log || !window.console.log.apply)
         return;

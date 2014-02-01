@@ -52,6 +52,15 @@ CREATE TABLE state (
 	    		CONSTRAINT state_pk PRIMARY KEY (state_id)
 );
 
+CREATE TABLE restaurant (
+			    restaurant_id BIGINT NOT NULL,
+	    		name CHARACTER VARYING(100) NOT NULL,
+	    		phone_number CHARACTER VARYING(10) NOT NULL,
+	    		notes CHARACTER VARYING(1000) NOT NULL,
+				address_id BIGINT NOT NULL,				
+	    		CONSTRAINT restaurant_pk PRIMARY KEY (restaurant_id)
+);
+
 CREATE TABLE address (
 			    address_id BIGINT NOT NULL,
 			    address1 CHARACTER VARYING(100) NOT NULL,
@@ -66,30 +75,20 @@ CREATE TABLE address (
 			    CONSTRAINT address_pk PRIMARY KEY (address_id)
 );
 
-
-CREATE TABLE trip_status (
-			    trip_status_id BIGINT NOT NULL,
-			    description CHARACTER VARYING(100) NOT NULL,				
-			    CONSTRAINT trip_status_pk PRIMARY KEY (trip_status_id)
+CREATE TABLE order_status (
+	order_status_id BIGINT NOT NULL,
+	description CHARACTER VARYING(100) NOT NULL,				
+	CONSTRAINT order_status_pk PRIMARY KEY (order_status_id)
 );
 
-/*
-CREATE TABLE trip (
-	    trip_id BIGINT NOT NULL,
-	    account_id BIGINT NOT NULL,
-		trip_name CHARACTER VARYING(100) NOT NULL,				
-		reservation_number CHARACTER VARYING(100) NOT NULL,	    
-	    pickup_address_id BIGINT NOT NULL,
-	    pickup_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,			    
-	    destination_address_id BIGINT NOT NULL,
-	    destination_time TIMESTAMP WITHOUT TIME ZONE,			    
-	    driver_id BIGINT NOT NULL default 0, -- 0 is not selected
-	    car_id BIGINT NOT NULL default 0, -- 0 is not selected
-	    trip_status_id BIGINT NOT NULL default 0, -- 0 is new
-	    num_of_passengers BIGINT NOT NULL default 1,
-		updated_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-		time_zone_identifier CHARACTER VARYING(100) DEFAULT 'US/Eastern',		
-	    CONSTRAINT trip_pk PRIMARY KEY (trip_id)
+
+CREATE TABLE food_order (
+	food_order_id BIGINT NOT NULL,
+	order_status_id BIGINT NOT NULL,
+	restaurant_id BIGINT NOT NULL,
+	account_id BIGINT NOT NULL,
+	food_order TEXT NOT NULL,
+	CONSTRAINT food_order_pk PRIMARY KEY (food_order_id)
 );
 
 CREATE TABLE message_log (
@@ -104,7 +103,6 @@ CREATE TABLE message_log (
 	updated_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	CONSTRAINT message_log_pk PRIMARY KEY (message_log_id)
 );
-*/
 
 -- Indexes --
 
@@ -119,8 +117,7 @@ CREATE SEQUENCE trip_seq START WITH 1000;
 CREATE SEQUENCE account_seq START WITH 1000;
 CREATE SEQUENCE message_log_seq START WITH 1000;
 CREATE SEQUENCE device_location_seq START WITH 1000;
-
--- where is trip_seq
+CREATE SEQUENCE restaurant_seq START WITH 1000;
 
 -- Functions --
 CREATE OR REPLACE FUNCTION set_updated_date() RETURNS TRIGGER AS $$
@@ -167,8 +164,6 @@ $$ LANGUAGE 'sql' IMMUTABLE STRICT;
 CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON account FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
 CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON account_role FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
 CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON address FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
--- CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON trip FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
--- CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON message_log FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
 
 -- Constraints --  
 
@@ -179,3 +174,11 @@ REFERENCES role (role_id);
 ALTER TABLE account_role ADD CONSTRAINT account_account_role_fk
 FOREIGN KEY (account_id)
 REFERENCES account (account_id);
+
+ALTER TABLE food_order ADD CONSTRAINT order_account_role_fk
+FOREIGN KEY (account_id)
+REFERENCES account (account_id);
+
+ALTER TABLE food_order ADD CONSTRAINT order_restaurant_role_fk
+FOREIGN KEY (restaurant_id)
+REFERENCES restaurant (restaurant_id);

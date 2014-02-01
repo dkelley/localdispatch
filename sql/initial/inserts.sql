@@ -1,14 +1,13 @@
 -- Inserts --
 INSERT INTO role(role_id, description, display_order) VALUES (1, 'Admin', 1);
-INSERT INTO role(role_id, description, display_order) VALUES (2, 'Manager', 2);
-INSERT INTO role(role_id, description, display_order) VALUES (3, 'Host', 3);
-INSERT INTO role(role_id, description, display_order) VALUES (4, 'Guest', 4);
+INSERT INTO role(role_id, description, display_order) VALUES (2, 'Driver', 2);
+INSERT INTO role(role_id, description, display_order) VALUES (4, 'Guest', 3);
 
-INSERT INTO trip_status(trip_status_id, description) VALUES (0, 'New');
-INSERT INTO trip_status(trip_status_id, description) VALUES (1, 'Booked');
-INSERT INTO trip_status(trip_status_id, description) VALUES (2, 'On The Way');
-INSERT INTO trip_status(trip_status_id, description) VALUES (3, 'On Location');
-INSERT INTO trip_status(trip_status_id, description) VALUES (4, 'Completed');
+INSERT INTO order_status(order_status_id, description) VALUES (0, 'Open');
+INSERT INTO order_status(order_status_id, description) VALUES (1, 'Confirmed');
+INSERT INTO order_status(order_status_id, description) VALUES (2, 'Picked Up');
+INSERT INTO order_status(order_status_id, description) VALUES (3, 'Delivered');
+INSERT INTO order_status(order_status_id, description) VALUES (4, 'Completed');
 
 INSERT INTO state VALUES (1, 1, 'Alabama', 'AL');
 INSERT INTO state VALUES (2, 2, 'Alaska', 'AK');
@@ -62,6 +61,8 @@ INSERT INTO state VALUES (49, 49, 'West Virginia', 'WV');
 INSERT INTO state VALUES (50, 50, 'Wisconsin', 'WI');
 INSERT INTO state VALUES (51, 51, 'Wyoming', 'WY');
 
+
+/* 
 INSERT INTO address(address_id, address1, address2, city, state_id, zipcode, latitude, longitude) VALUES(1, '221 S. Ithan Ave', null, 'Rosemont', 39, '19010', 40.028828,-75.350243);
 INSERT INTO address(address_id, address1, address2, city, state_id, zipcode, latitude, longitude) VALUES(2, 'Philadelphia Airport', 'Terminal C', 'Philadephia', 39, '19010', 39.876376,-75.243466);
 
@@ -71,7 +72,6 @@ INSERT INTO account_role(account_id, role_id) VALUES(1,4);
 INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(2, 'Chris', 'Wolfington', '7816355393', '7054deb714e89499a9eb3d435d12f37e', '2', '2');
 INSERT INTO account_role(account_id, role_id) VALUES(2,4);
 
-/* 
 INSERT INTO trip(trip_name, reservation_number, trip_id,account_id, pickup_address_id, pickup_time, destination_address_id, destination_time, driver_id)
 VALUES('Trip 1021', '1234', 1021, 1, 1, now(), 2, null, 0);
 
@@ -80,8 +80,42 @@ VALUES('Trip 1022', 'ABCD', 1022, 2, 1, now(), 2, null, 1);
 */
 
 -- Add an admin account
-INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(6, 'citycar', 'Admin', '6103061733','7054deb714e89499a9eb3d435d12f37e', '6', '6');
-INSERT INTO account_role(account_id, role_id) VALUES(6,1);
+INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(1, 'Dan', 'Kelley', '6103061733','7054deb714e89499a9eb3d435d12f37e', '1', '1');
+INSERT INTO account_role(account_id, role_id) VALUES(1,1);
 
-INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(10, 'Fusion', 'Apps', '1234567890', '7054deb714e89499a9eb3d435d12f37e', '10', '10');
-INSERT INTO account_role(account_id, role_id) VALUES(10,1);
+INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(2, 'Rich', 'Siegel', '1234567890', '7054deb714e89499a9eb3d435d12f37e', '2', '2');
+INSERT INTO account_role(account_id, role_id) VALUES(2,1);
+
+-- Add an driver account
+INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(3, 'Driver', 'One', '6103061733','7054deb714e89499a9eb3d435d12f37e', '3', '3');
+INSERT INTO account_role(account_id, role_id) VALUES(3,2);
+
+INSERT INTO account (account_id, first_name, last_name, phone_number, password, remember_me_token, api_token) VALUES(4, 'Driver', 'Two', '1234567890', '7054deb714e89499a9eb3d435d12f37e', '4', '4');
+INSERT INTO account_role(account_id, role_id) VALUES(4,2);
+
+
+-- add restaurants
+insert into address (address_id, address1, city, state_id, zipcode, latitude, longitude)
+values(nextval('address_seq'), '333 Belrose Ln','Radnor',39, 19087, 40.045719,-75.361857);
+
+insert into restaurant(restaurant_id, name, phone_number, notes, address_id)
+values(nextval('restaurant_seq'),'333 Belrose','6102931000', 'Ask for Brian',currval('address_seq'));
+
+insert into address (address_id, address1, city, state_id, zipcode, latitude, longitude)
+values(nextval('address_seq'), '555 E Lancaster Ave','Radnor',39, 19087, 40.04121,-75.367758);
+
+insert into restaurant(restaurant_id, name, phone_number, notes, address_id)
+values(nextval('restaurant_seq'),'Susanna Foo','6106888808', 'Always check the order',currval('address_seq'));
+
+insert into address (address_id, address1, city, state_id, zipcode, latitude, longitude)
+values(nextval('address_seq'), '200 W Lancaster Ave','Wayne',39, 19087, 40.044019,-75.391275);
+
+insert into restaurant(restaurant_id, name, phone_number, notes, address_id)
+values(nextval('restaurant_seq'),'White Dog Cafe','6102253700', 'gret',currval('address_seq'));
+
+insert into address (address_id, address1, city, state_id, zipcode, latitude, longitude)
+values(nextval('address_seq'), '789 E Lancaster Ave','Wayne',39, 19085, 40.0367,-75.350645);
+
+insert into restaurant(restaurant_id, name, phone_number, notes, address_id)
+values(nextval('restaurant_seq'),'Azie on Main','6105275700', 'gret',currval('address_seq'));
+
