@@ -1,4 +1,4 @@
-package com.xmog.service;
+package com.xmog.web.service;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 //import static com.letsplayinternets.model.QuestionType.QUESTION_TYPE_AUTOCOMPLETE_THIS;

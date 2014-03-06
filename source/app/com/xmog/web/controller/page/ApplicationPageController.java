@@ -33,7 +33,7 @@ public class ApplicationPageController {
   }
   
   protected Page dashboardPage(final String name, Map<String, Object> model) {
-    return new Page("templates/standard.html", new HashMap<String, Object>(model) {
+    return new Page("templates/application.html", new HashMap<String, Object>(model) {
       {
         put("body", format("pages/application/%s/body.html", name));
         put("javascript", format("pages/application/%s/javascript.html", name));

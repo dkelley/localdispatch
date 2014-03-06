@@ -88,6 +88,8 @@ CREATE TABLE food_order (
 	restaurant_id BIGINT NOT NULL,
 	account_id BIGINT NOT NULL,
 	food_order TEXT NOT NULL,
+	created_date TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+	updated_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	CONSTRAINT food_order_pk PRIMARY KEY (food_order_id)
 );
 
@@ -118,6 +120,7 @@ CREATE SEQUENCE account_seq START WITH 1000;
 CREATE SEQUENCE message_log_seq START WITH 1000;
 CREATE SEQUENCE device_location_seq START WITH 1000;
 CREATE SEQUENCE restaurant_seq START WITH 1000;
+CREATE SEQUENCE food_order_seq START WITH 1000;
 
 -- Functions --
 CREATE OR REPLACE FUNCTION set_updated_date() RETURNS TRIGGER AS $$
@@ -164,6 +167,7 @@ $$ LANGUAGE 'sql' IMMUTABLE STRICT;
 CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON account FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
 CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON account_role FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
 CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON address FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
+CREATE TRIGGER set_updated_date BEFORE INSERT OR UPDATE ON food_order FOR EACH ROW EXECUTE PROCEDURE set_updated_date();
 
 -- Constraints --  
 

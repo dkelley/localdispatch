@@ -10,10 +10,10 @@ import javax.ws.rs.Produces;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.xmog.command.SaveLocationCommand;
-import com.xmog.service.DeviceLocationService;
 import com.xmog.stack.exception.NotFoundException;
 import com.xmog.stack.web.annotation.Public;
 import com.xmog.web.context.CurrentContext;
+import com.xmog.web.service.DeviceLocationService;
 
 /**
  * @author Transmogrify LLC.

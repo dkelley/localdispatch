@@ -1,11 +1,11 @@
 package com.xmog.event;
 
-import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.String.format;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 
-import com.xmog.service.DeviceLocationService;
+import com.xmog.web.service.DeviceLocationService;
 
 public class LocationUpdateEvent {
 	

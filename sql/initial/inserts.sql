@@ -119,3 +119,6 @@ values(nextval('address_seq'), '789 E Lancaster Ave','Wayne',39, 19085, 40.0367,
 insert into restaurant(restaurant_id, name, phone_number, notes, address_id)
 values(nextval('restaurant_seq'),'Azie on Main','6105275700', 'gret',currval('address_seq'));
 
+-- demo data
+insert into food_order(food_order_id, order_status_id, restaurant_id, account_id, food_order)
+values(nextval('food_order_seq'),1,1000, 1,'This is order one');

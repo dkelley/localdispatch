@@ -12,9 +12,9 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.xmog.event.LocationUpdateEvent;
 import com.xmog.model.DeviceLocation;
-import com.xmog.service.DeviceLocationService;
 import com.xmog.stack.templating.json.JsonMapper;
 import com.xmog.stack.web.websocket.StackWebSocket;
+import com.xmog.web.service.DeviceLocationService;
 
 /**
  * @author Dan Kelley

@@ -6,26 +6,19 @@
     		<title>#html($title)</title>
     	#end
     	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    	<link href="#cached('/static/cached/css/bootstrap.css')" rel="stylesheet"/>    	
+    	<link href="#cached('/static/cached/css/bootstrap.css')" rel="stylesheet"/>  
+    	<link href="#cached('/static/cached/css/bootstrap-theme.css')" rel="stylesheet"/>    	
     	<link href="#cached('/static/cached/css/app.css')" rel="stylesheet"/>
-    	 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
     	
 		#if($css)
 			#parse($css)
 		#end		
 	</head>
-	<body ng-app="localDispatch">
-		<!-- In production use:
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-		-->
+	<body ng-app="localDispatchApp">
 		<script type="text/javascript" src="#cached('/static/cached/js/lib/jquery-1.8.3/jquery.js')"></script>
-		<script type="text/javascript" src="#cached('/static/cached/js/stack.js')"></script>	
-		<script type="text/javascript">
-			stack.cachedUrls = $cachedUrls;
-		</script>
-		<script type="text/javascript" src="#cached('/static/cached/js/websocket.js')"></script>		
 		<script type="text/javascript" src="#cached('/static/cached/js/lib/angular-1.2.9/angular.js')"></script>	
 		<script type="text/javascript" src="#cached('/static/cached/js/lib/angular-1.2.9/angular-route.js')"></script>	
+		<script type="text/javascript" src="#cached('/static/cached/js/bootstrap/global.js')"></script>
 	
 		<div class="container">		
 			#if($body)
